@@ -6,14 +6,14 @@
         "formDefinitionName": "start-form-example"
     },
     {
-        "activityId": "time-api-sample-action",
+        "activityId": "time-api-graphql-action",
         "activityType": "bpmn:ServiceTask:start",
         "processLinkType": "plugin",
-        "pluginDefinitionKey": "sample-plugin",
-        "pluginActionDefinitionKey": "time-api-sample-action",
+        "pluginDefinitionKey": "graphql-plugin",
+        "pluginActionDefinitionKey": "time-api-graphql-action",
         "pluginConfigurationId": "4ac9a49f-4aeb-4f91-86d9-853fd95a1b33",
         "actionProperties": {
-            "message": "Hello from the sample plugin!"
+            "message": "Hello from the GraphQL plugin!"
         }
     }
 ]

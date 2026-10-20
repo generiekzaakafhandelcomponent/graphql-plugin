@@ -14,4 +14,12 @@
  * limitations under the License.
  */
 
-export * from "./config";
+package com.ritense.valtimoplugins.graphql
+
+import org.junit.jupiter.api.Test
+
+internal class ApplicationStartIT : BaseIntegrationTest() {
+    @Test
+    fun `should start application`() {
+    }
+}

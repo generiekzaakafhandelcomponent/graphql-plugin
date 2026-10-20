@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package com.ritense.valtimoplugins.sampleplugin.client
+package com.ritense.valtimoplugins.graphql.plugin
 
+import com.ritense.plugin.PluginFactory
+import com.ritense.plugin.service.PluginService
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
-import org.springframework.stereotype.Service
+import com.ritense.valtimoplugins.graphql.client.GraphQLService
+import org.springframework.stereotype.Component
 
+/**
+ * Factory class to create instances of the GraphQLPlugin.
+ * This is required for the plugin framework to instantiate the plugin.
+ */
 @SkipComponentScan
-@Service
-class SampleService(
-    private val sampleClient: SampleClient,
-) {
-    fun printAPIResults(apiUrl: String): String {
-        val apiResponse = sampleClient.fetchTimeAPI(apiUrl)
-
-        if (apiResponse.error != null) {
-            return "Failed: ${apiResponse.error}"
-        }
-
-        val tz = apiResponse.result?.body
-        return "Timezone: ${tz?.timeZone}, DateTime: ${tz?.dateTime}, " +
-            "DayOfWeek: ${tz?.dayOfWeek}, HTTP Status: ${apiResponse.responseStatus}"
-    }
+@Component
+class GraphQLPluginFactory(
+    pluginService: PluginService,
+    val graphqlService: GraphQLService,
+) : PluginFactory<GraphQLPlugin>(pluginService) {
+    override fun create(): GraphQLPlugin = GraphQLPlugin(graphqlService)
 }

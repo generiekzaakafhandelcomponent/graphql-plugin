@@ -15,7 +15,7 @@
         <bpmn:startEvent id="start-event" name="Process started">
             <bpmn:outgoing>Flow_1</bpmn:outgoing>
         </bpmn:startEvent>
-        <bpmn:serviceTask id="time-api-sample-action" name="Call Time API via sample plugin">
+        <bpmn:serviceTask id="time-api-graphql-action" name="Call Time API via GraphQL plugin">
             <bpmn:incoming>Flow_1</bpmn:incoming>
             <bpmn:outgoing>Flow_2</bpmn:outgoing>
         </bpmn:serviceTask>
@@ -26,8 +26,8 @@
             </bpmn:extensionElements>
             <bpmn:incoming>Flow_2</bpmn:incoming>
         </bpmn:endEvent>
-        <bpmn:sequenceFlow id="Flow_1" sourceRef="start-event" targetRef="time-api-sample-action"/>
-        <bpmn:sequenceFlow id="Flow_2" sourceRef="time-api-sample-action" targetRef="end-event"/>
+        <bpmn:sequenceFlow id="Flow_1" sourceRef="start-event" targetRef="time-api-graphql-action"/>
+        <bpmn:sequenceFlow id="Flow_2" sourceRef="time-api-graphql-action" targetRef="end-event"/>
     </bpmn:process>
     <bpmndi:BPMNDiagram id="BPMNDiagram_1">
         <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1">
@@ -40,7 +40,7 @@
                     <dc:Bounds x="214" y="225" width="73" height="14"/>
                 </bpmndi:BPMNLabel>
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="ServiceTask_1_di" bpmnElement="time-api-sample-action">
+            <bpmndi:BPMNShape id="ServiceTask_1_di" bpmnElement="time-api-graphql-action">
                 <dc:Bounds x="370" y="160" width="100" height="80"/>
             </bpmndi:BPMNShape>
             <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="end-event">

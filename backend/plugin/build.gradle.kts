@@ -15,7 +15,7 @@
  */
 
 dockerCompose {
-    setProjectName("sample-plugin")
+    setProjectName("graphql-plugin")
     isRequiredBy(project.tasks.test)
 
     tasks.test {

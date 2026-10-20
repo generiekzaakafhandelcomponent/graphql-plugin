@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package com.ritense.valtimoplugins.sampleplugin.autoconfiguration
+package com.ritense.valtimoplugins.graphql.autoconfiguration
 
 import com.ritense.plugin.service.PluginService
-import com.ritense.valtimoplugins.sampleplugin.client.SampleClient
-import com.ritense.valtimoplugins.sampleplugin.client.SampleService
-import com.ritense.valtimoplugins.sampleplugin.plugin.SamplePluginFactory
+import com.ritense.valtimoplugins.graphql.client.GraphQLClient
+import com.ritense.valtimoplugins.graphql.client.GraphQLService
+import com.ritense.valtimoplugins.graphql.plugin.GraphQLPluginFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 
 @AutoConfiguration
-class SampleAutoConfiguration {
+class GraphQLAutoConfiguration {
     @Bean
-    @ConditionalOnMissingBean(SampleClient::class)
-    fun sampleClient(): SampleClient = SampleClient()
+    @ConditionalOnMissingBean(GraphQLClient::class)
+    fun graphqlClient(): GraphQLClient = GraphQLClient()
 
     @Bean
-    @ConditionalOnMissingBean(SampleService::class)
-    fun sampleService(sampleClient: SampleClient): SampleService = SampleService(sampleClient)
+    @ConditionalOnMissingBean(GraphQLService::class)
+    fun graphqlService(graphqlClient: GraphQLClient): GraphQLService = GraphQLService(graphqlClient)
 
     @Bean
-    @ConditionalOnMissingBean(SamplePluginFactory::class)
-    fun samplePluginFactory(
+    @ConditionalOnMissingBean(GraphQLPluginFactory::class)
+    fun graphqlPluginFactory(
         pluginService: PluginService,
-        sampleService: SampleService,
-    ): SamplePluginFactory = SamplePluginFactory(pluginService, sampleService)
+        graphqlService: GraphQLService,
+    ): GraphQLPluginFactory = GraphQLPluginFactory(pluginService, graphqlService)
 }
