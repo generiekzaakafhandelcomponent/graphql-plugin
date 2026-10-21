@@ -23,8 +23,8 @@ pluginManager.withPlugin("maven-publish") {
                 version = pluginProperties.pluginVersion
 
                 pom {
-                    name = "Sample plugin module"
-                    description = "A module containing a sample plugin"
+                    name = "GraphQL plugin module"
+                    description = "A module containing the GraphQL plugin"
                     developers {
                         developer {
                             id = "team-valtimo"

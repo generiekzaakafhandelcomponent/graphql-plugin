@@ -17,14 +17,14 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {PluginTranslatePipeModule} from "@valtimo/plugin";
-import {FormModule, InputModule as ValtimoInputModule} from "@valtimo/components";
-import {SamplePluginConfigurationComponent} from "./components/sample-plugin-configuration/sample-plugin-configuration.component";
-import {SampleActionConfigurationComponent} from "./components/sample-action-configuration/sample-action-configuration.component";
+import {FormModule, InputModule as ValtimoInputModule, EditorModule} from "@valtimo/components";
+import {GraphQLPluginConfigurationComponent} from "./components/graphql-plugin-configuration/graphql-plugin-configuration.component";
+import {GraphQlByInputActionConfigurationComponent} from "./components/graphql-by-input-action-configuration/graphql-by-input-action-configuration.component";
 
 @NgModule({
-  declarations: [SamplePluginConfigurationComponent, SampleActionConfigurationComponent],
-  imports: [CommonModule, PluginTranslatePipeModule, FormModule, ValtimoInputModule],
-  exports: [SamplePluginConfigurationComponent, SampleActionConfigurationComponent],
+  declarations: [GraphQLPluginConfigurationComponent, GraphQlByInputActionConfigurationComponent],
+  imports: [CommonModule, PluginTranslatePipeModule, FormModule, ValtimoInputModule, EditorModule],
+  exports: [GraphQLPluginConfigurationComponent, GraphQlByInputActionConfigurationComponent],
 })
-export class SamplePluginModule {
+export class GraphQLPluginModule {
 }

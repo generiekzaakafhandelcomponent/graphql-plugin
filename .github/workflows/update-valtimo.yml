@@ -28,8 +28,10 @@ jobs:
     if: ${{ needs.check-secret.outputs.has_key == 'true' }}
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
+      issues: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

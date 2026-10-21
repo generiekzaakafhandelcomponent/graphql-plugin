@@ -29,15 +29,15 @@
     [defaultValue]="obs.prefill?.configurationTitle"
     [required]="true"
     [widthPx]="350"
-    placeholder="Sample Plugin"
+    placeholder="GraphQL Plugin"
   >
   </v-input>
   <v-input
-    name="apiUrl"
-    [title]="'apiUrl' | pluginTranslate: pluginId | async"
+    name="graphqlUrl"
+    [title]="'graphqlUrl' | pluginTranslate: pluginId | async"
     [margin]="true"
     [disabled]="obs.disabled"
-    [defaultValue]="obs.prefill?.apiUrl"
+    [defaultValue]="obs.prefill?.graphqlUrl"
     [required]="true"
     [widthPx]="350"
   >

@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package com.ritense.valtimoplugins.sampleplugin.plugin
+package com.ritense.valtimoplugins.graphql.plugin
 
 import com.ritense.plugin.PluginFactory
 import com.ritense.plugin.service.PluginService
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
-import com.ritense.valtimoplugins.sampleplugin.client.SampleService
+import com.ritense.valtimoplugins.graphql.client.GraphQLClient
+import com.ritense.valueresolver.ValueResolverService
 import org.springframework.stereotype.Component
 
 /**
- * Factory class to create instances of the SamplePlugin.
+ * Factory class to create instances of the GraphQLPlugin.
  * This is required for the plugin framework to instantiate the plugin.
  */
 @SkipComponentScan
 @Component
-class SamplePluginFactory(
+class GraphQLPluginFactory(
     pluginService: PluginService,
-    val sampleService: SampleService,
-) : PluginFactory<SamplePlugin>(pluginService) {
-    override fun create(): SamplePlugin = SamplePlugin(sampleService)
+    private val graphqlClient: GraphQLClient,
+    private val valueResolver: ValueResolverService,
+) : PluginFactory<GraphQLPlugin>(pluginService) {
+    override fun create(): GraphQLPlugin = GraphQLPlugin(graphqlClient, valueResolver)
 }

@@ -7,7 +7,7 @@ dependencies {
     implementation(platform("com.ritense.valtimo:valtimo-dependency-versions:$valtimoVersion"))
 
     implementation("com.ritense.valtimo:valtimo-dependencies:$valtimoVersion")
-    implementation("com.ritense.valtimo:valtimo-gzac-dependencies:$valtimoVersion")
+ //   implementation("com.ritense.valtimo:valtimo-gzac-dependencies:$valtimoVersion")
     implementation("com.ritense.valtimo:local-mail:$valtimoVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -38,7 +38,7 @@ dockerCompose {
 }
 
 tasks.bootRun {
-    dependsOn("composeUp")
+  //  dependsOn("composeUp")
     systemProperty("spring.profiles.include", "dev")
     val t = this
     doFirst {

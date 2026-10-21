@@ -4,7 +4,7 @@
 
 ## Overview
 
-This is a sample plugin demonstrating an API call action. It fetches data from a time API endpoint.
+The GraphQL plugin executes GraphQL queries on a configured GraphQL endpoint.
 
 ## Dependencies
 
@@ -12,7 +12,7 @@ This is a sample plugin demonstrating an API call action. It fetches data from a
 
 ```kotlin
 dependencies {
-    implementation("com.ritense.valtimoplugins:sample-plugin:0.0.1")
+    implementation("com.ritense.valtimoplugins:graphql-plugin:0.0.1")
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 ```json
 {
   "dependencies": {
-    "@valtimo-plugins/sample-plugin": "0.0.1"
+    "@valtimo-plugins/graphql-plugin": "0.0.1"
   }
 }
 ```
@@ -30,18 +30,18 @@ In your `app.module.ts`:
 
 ```typescript
 import {
-    SamplePluginModule, samplePluginSpecification,
-} from '@valtimo-plugins/sample-plugin';
+    GraphQLPluginModule, graphqlPluginSpecification,
+} from '@valtimo-plugins/graphql-plugin';
 
 @NgModule({
     imports: [
-        SamplePluginModule,
+        GraphQLPluginModule,
     ],
     providers: [
         {
             provide: PLUGIN_TOKEN,
             useValue: [
-                samplePluginSpecification,
+                graphqlPluginSpecification,
             ]
         }
     ]
@@ -52,19 +52,21 @@ import {
 
 List the plugin configuration properties and how to set them.
 
-| Property | Type   | Required | Description                          |
-|----------|--------|----------|--------------------------------------|
-| apiUrl   | string | Yes      | The URL of the time API to call      |
+| Property   | Type   | Required | Description                                                         |
+|------------|--------|----------|---------------------------------------------------------------------|
+| graphqlUrl | string | Yes      | The URL of the GraphQL endpoint, e.g. `https://example.com/graphql` |
 
 ## Actions
 
-### Time API test action
+### GraphQL by Input
 
-Sends a GET request to the configured API URL and returns the timezone response.
+Key: `graphql-by-input`. Executes a GraphQL query on the configured endpoint and stores the response data in a process variable.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-|           |      |          |             |
+| Parameter                 | Type   | Required | Description                                                                                                  |
+|---------------------------|--------|----------|--------------------------------------------------------------------------------------------------------------|
+| query                     | string | Yes      | The GraphQL query document                                                                                   |
+| variables                 | string | No       | JSON object with query variables. String values with a value resolver prefix (e.g. `pv:caseId`) are resolved |
+| resultProcessVariableName | string | Yes      | Name of the process variable where the response data is stored                                               |
 
 ## Usage
 

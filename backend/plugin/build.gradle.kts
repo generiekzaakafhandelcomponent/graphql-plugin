@@ -15,7 +15,7 @@
  */
 
 dockerCompose {
-    setProjectName("sample-plugin")
+    setProjectName("graphql-plugin")
     isRequiredBy(project.tasks.test)
 
     tasks.test {
@@ -31,16 +31,20 @@ val operatonVersion: String by project
 dependencies {
     compileOnly("com.ritense.valtimo:plugin-valtimo")
     compileOnly("com.ritense.valtimo:process-document")
+    compileOnly("com.ritense.valtimo:value-resolver")
     compileOnly("com.ritense.valtimo:contract")
     compileOnly("org.operaton.bpm:operaton-engine:$operatonVersion")
     compileOnly("org.springframework.boot:spring-boot-autoconfigure")
     compileOnly("org.springframework.boot:spring-boot-starter-web")
 
     compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
+    implementation("org.springframework.graphql:spring-graphql")
 
     // Testing
     testImplementation("com.ritense.valtimo:plugin-valtimo")
     testImplementation("com.ritense.valtimo:process-document")
+    testImplementation("com.ritense.valtimo:value-resolver")
+    testImplementation("org.operaton.bpm:operaton-engine:$operatonVersion")
     testImplementation("com.ritense.valtimo:building-block")
     testImplementation("com.ritense.valtimo:local-resource")
     testImplementation("com.ritense.valtimo:test-utils-common")

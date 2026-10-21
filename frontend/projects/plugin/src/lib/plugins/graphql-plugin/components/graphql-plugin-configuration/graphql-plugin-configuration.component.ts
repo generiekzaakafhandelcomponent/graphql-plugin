@@ -15,55 +15,55 @@
  */
 
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {FunctionConfigurationComponent, FunctionConfigurationData} from "@valtimo/plugin";
-import {BehaviorSubject, combineLatest, Observable, Subscription, switchMap, take} from "rxjs";
-import {SampleActionConfig} from "../../models";
+import {PluginConfigurationComponent, PluginConfigurationData} from "@valtimo/plugin";
+import {BehaviorSubject, combineLatest, Observable, Subscription, take} from "rxjs";
+import {GraphQLPluginConfig} from "../../models";
 
 @Component({
   standalone: false,
-  selector: "valtimo-sample-action-configuration",
-  templateUrl: "./sample-action-configuration.component.html",
+  selector: "valtimo-graphql-plugin-configuration",
+  templateUrl: "./graphql-plugin-configuration.component.html",
 })
-export class SampleActionConfigurationComponent implements FunctionConfigurationComponent, OnInit, OnDestroy {
+export class GraphQLPluginConfigurationComponent implements PluginConfigurationComponent, OnInit, OnDestroy {
   @Input() save$!: Observable<void>;
   @Input() disabled$!: Observable<boolean>;
   @Input() pluginId!: string;
-  @Input() prefillConfiguration$!: Observable<SampleActionConfig>;
+  @Input() prefillConfiguration$!: Observable<GraphQLPluginConfig>;
   @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() configuration: EventEmitter<FunctionConfigurationData> = new EventEmitter<FunctionConfigurationData>();
+  @Output() configuration: EventEmitter<PluginConfigurationData> = new EventEmitter<PluginConfigurationData>();
 
   private saveSubscription!: Subscription;
-  private readonly formValue$ = new BehaviorSubject<SampleActionConfig | null>(null);
+  private readonly formValue$ = new BehaviorSubject<GraphQLPluginConfig | null>(null);
   private readonly valid$ = new BehaviorSubject<boolean>(false);
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.openSaveSubscription();
   }
 
-  public ngOnDestroy() {
+  ngOnDestroy() {
     this.saveSubscription?.unsubscribe();
   }
 
-  public formValueChange(formValue: SampleActionConfig): void {
+  formValueChange(formValue: GraphQLPluginConfig): void {
     this.formValue$.next(formValue);
     this.handleValid(formValue);
   }
 
-  private handleValid(formValue: SampleActionConfig): void {
-    const valid = !!formValue.message;
+  private handleValid(formValue: GraphQLPluginConfig): void {
+    const valid = !!(formValue.configurationTitle && formValue.graphqlUrl);
     this.valid$.next(valid);
     this.valid.emit(valid);
   }
 
   private openSaveSubscription(): void {
-    this.saveSubscription = this.save$
-      ?.pipe(
-        switchMap(() => combineLatest([this.formValue$, this.valid$]).pipe(take(1)))
-      )
-      .subscribe(([formValue, valid]) => {
-        if (valid) {
-          this.configuration.emit(formValue!);
-        }
-      });
+    this.saveSubscription = this.save$?.subscribe(() => {
+      combineLatest([this.formValue$, this.valid$])
+        .pipe(take(1))
+        .subscribe(([formValue, valid]) => {
+          if (valid) {
+            this.configuration.emit(formValue!);
+          }
+        });
+    });
   }
 }

@@ -15,11 +15,11 @@
  */
 
 /*
- * Public API Surface of sample-plugin
+ * Public API Surface of graphql-plugin
  */
 
-export * from "./lib/plugins/sample-plugin/models";
-export * from "./lib/plugins/sample-plugin/sample-plugin-module";
-export * from "./lib/plugins/sample-plugin/sample-plugin.specification";
-export * from "./lib/plugins/sample-plugin/components/sample-plugin-configuration/sample-plugin-configuration.component";
-export * from "./lib/plugins/sample-plugin/components/sample-action-configuration/sample-action-configuration.component";
+export * from "./lib/plugins/graphql-plugin/models";
+export * from "./lib/plugins/graphql-plugin/graphql-plugin-module";
+export * from "./lib/plugins/graphql-plugin/graphql-plugin.specification";
+export * from "./lib/plugins/graphql-plugin/components/graphql-plugin-configuration/graphql-plugin-configuration.component";
+export * from "./lib/plugins/graphql-plugin/components/graphql-by-input-action-configuration/graphql-by-input-action-configuration.component";
