@@ -20,4 +20,10 @@ interface GraphQLPluginConfig extends PluginConfigurationData {
   graphqlUrl: string;
 }
 
-export {GraphQLPluginConfig};
+interface GraphQlByInputActionConfig {
+  query: string;
+  variables?: string;
+  resultProcessVariableName: string;
+}
+
+export {GraphQLPluginConfig, GraphQlByInputActionConfig};

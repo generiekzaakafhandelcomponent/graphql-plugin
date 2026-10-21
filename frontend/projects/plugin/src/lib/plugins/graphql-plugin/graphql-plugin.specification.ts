@@ -17,23 +17,35 @@
 import {PluginSpecification} from "@valtimo/plugin";
 import {GraphQLPluginConfigurationComponent} from "./components/graphql-plugin-configuration/graphql-plugin-configuration.component";
 import {GRAPHQL_PLUGIN_LOGO_BASE64} from "./assets";
+import {GraphQlByInputActionConfigurationComponent} from "./components/graphql-by-input-action-configuration/graphql-by-input-action-configuration.component";
 
 const graphqlPluginSpecification: PluginSpecification = {
   pluginId: "graphql-plugin",
   pluginConfigurationComponent: GraphQLPluginConfigurationComponent,
   pluginLogoBase64: GRAPHQL_PLUGIN_LOGO_BASE64,
+  functionConfigurationComponents: {
+    "graphql-by-input": GraphQlByInputActionConfigurationComponent,
+  },
   pluginTranslations: {
     nl: {
       title: "GraphQL Plugin",
       description: "Voer GraphQL queries uit op een geconfigureerd GraphQL endpoint.",
       configurationTitle: "Configuratienaam",
       graphqlUrl: "GraphQL endpoint URL",
+      "graphql-by-input": "GraphQL via invoer",
+      query: "GraphQL query",
+      variables: "Variabelen (JSON)",
+      resultProcessVariableName: "Resultaat procesvariabele",
     },
     en: {
       title: "GraphQL Plugin",
       description: "Execute GraphQL queries on a configured GraphQL endpoint.",
       configurationTitle: "Configuration Name",
       graphqlUrl: "GraphQL endpoint URL",
+      "graphql-by-input": "GraphQL by Input",
+      query: "GraphQL query",
+      variables: "Variables (JSON)",
+      resultProcessVariableName: "Result process variable",
     },
   },
 };

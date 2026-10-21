@@ -17,13 +17,14 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {PluginTranslatePipeModule} from "@valtimo/plugin";
-import {FormModule, InputModule as ValtimoInputModule} from "@valtimo/components";
+import {FormModule, InputModule as ValtimoInputModule, EditorModule} from "@valtimo/components";
 import {GraphQLPluginConfigurationComponent} from "./components/graphql-plugin-configuration/graphql-plugin-configuration.component";
+import {GraphQlByInputActionConfigurationComponent} from "./components/graphql-by-input-action-configuration/graphql-by-input-action-configuration.component";
 
 @NgModule({
-  declarations: [GraphQLPluginConfigurationComponent],
-  imports: [CommonModule, PluginTranslatePipeModule, FormModule, ValtimoInputModule],
-  exports: [GraphQLPluginConfigurationComponent],
+  declarations: [GraphQLPluginConfigurationComponent, GraphQlByInputActionConfigurationComponent],
+  imports: [CommonModule, PluginTranslatePipeModule, FormModule, ValtimoInputModule, EditorModule],
+  exports: [GraphQLPluginConfigurationComponent, GraphQlByInputActionConfigurationComponent],
 })
 export class GraphQLPluginModule {
 }

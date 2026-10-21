@@ -58,7 +58,15 @@ List the plugin configuration properties and how to set them.
 
 ## Actions
 
-No actions yet.
+### GraphQL by Input
+
+Key: `graphql-by-input`. Executes a GraphQL query on the configured endpoint and stores the response data in a process variable.
+
+| Parameter                 | Type   | Required | Description                                                                                                  |
+|---------------------------|--------|----------|--------------------------------------------------------------------------------------------------------------|
+| query                     | string | Yes      | The GraphQL query document                                                                                   |
+| variables                 | string | No       | JSON object with query variables. String values with a value resolver prefix (e.g. `pv:caseId`) are resolved |
+| resultProcessVariableName | string | Yes      | Name of the process variable where the response data is stored                                               |
 
 ## Usage
 
