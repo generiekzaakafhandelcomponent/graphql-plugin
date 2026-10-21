@@ -17,55 +17,19 @@
 package com.ritense.valtimoplugins.graphql.plugin
 
 import com.ritense.plugin.annotation.Plugin
-import com.ritense.plugin.annotation.PluginAction
-import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
-import com.ritense.processlink.domain.ActivityTypeWithEventName.SERVICE_TASK_START
-import com.ritense.valtimoplugins.graphql.client.GraphQLService
-import io.github.oshai.kotlinlogging.KotlinLogging
-import org.operaton.bpm.engine.delegate.DelegateExecution
-
-private val logger = KotlinLogging.logger {}
 
 /**
- * GraphQL plugin demonstrating a simple action that interacts with an API endpoint.
+ * GraphQL plugin for executing GraphQL queries on a configured GraphQL endpoint.
  * Note that the key in the @Plugin annotation must be unique, and
  * should be equal to the pluginId in the plugin's frontend configuration.
  */
 @Plugin(
     key = "graphql-plugin",
     title = "GraphQL Plugin",
-    description = "This is the GraphQL plugin demonstrating an API call action.",
+    description = "Execute GraphQL queries on a configured GraphQL endpoint.",
 )
-open class GraphQLPlugin(
-    private val graphqlService: GraphQLService,
-) {
-    @PluginProperty(key = "apiUrl", secret = false)
-    lateinit var apiUrl: String
-
-    /**
-     * Example action
-     * Sends a GET request to an API endpoint and returns the response.
-     */
-    @PluginAction(
-        key = "time-api-graphql-action",
-        title = "Time API test action",
-        description = "Time API plugin action",
-        activityTypes = [SERVICE_TASK_START],
-    )
-    open fun getCurrentTime(
-        execution: DelegateExecution,
-        @PluginActionProperty message: String,
-    ): String {
-        try {
-            val result = graphqlService.printAPIResults(apiUrl = apiUrl)
-            logger.info { "Message: $message, Result: $result" }
-            execution.setVariable("message", message)
-            execution.setVariable("apiResult", result)
-            return result
-        } catch (e: Exception) {
-            logger.error(e) { "Error: ${e.cause}" }
-            return "Error: ${e.message}"
-        }
-    }
+open class GraphQLPlugin {
+    @PluginProperty(key = "graphqlUrl", secret = false)
+    lateinit var graphqlUrl: String
 }

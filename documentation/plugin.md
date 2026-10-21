@@ -4,7 +4,7 @@
 
 ## Overview
 
-This is the GraphQL plugin demonstrating an API call action. It fetches data from a time API endpoint.
+The GraphQL plugin executes GraphQL queries on a configured GraphQL endpoint.
 
 ## Dependencies
 
@@ -52,19 +52,13 @@ import {
 
 List the plugin configuration properties and how to set them.
 
-| Property | Type   | Required | Description                          |
-|----------|--------|----------|--------------------------------------|
-| apiUrl   | string | Yes      | The URL of the time API to call      |
+| Property   | Type   | Required | Description                                                         |
+|------------|--------|----------|---------------------------------------------------------------------|
+| graphqlUrl | string | Yes      | The URL of the GraphQL endpoint, e.g. `https://example.com/graphql` |
 
 ## Actions
 
-### Time API test action
-
-Sends a GET request to the configured API URL and returns the timezone response.
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-|           |      |          |             |
+No actions yet.
 
 ## Usage
 

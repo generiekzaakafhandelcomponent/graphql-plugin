@@ -4,7 +4,7 @@
         "title": "GraphQL plugin (Autodeployed)",
         "pluginDefinitionKey": "graphql-plugin",
         "properties": {
-            "apiUrl": "https://timeapi.io/api/time/current/zone?timeZone=Europe/Amsterdam"
+            "graphqlUrl": "https://countries.trevorblades.com/graphql"
         }
     }
 ]

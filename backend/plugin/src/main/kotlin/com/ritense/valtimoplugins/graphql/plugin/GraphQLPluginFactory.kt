@@ -19,7 +19,6 @@ package com.ritense.valtimoplugins.graphql.plugin
 import com.ritense.plugin.PluginFactory
 import com.ritense.plugin.service.PluginService
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
-import com.ritense.valtimoplugins.graphql.client.GraphQLService
 import org.springframework.stereotype.Component
 
 /**
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Component
 @Component
 class GraphQLPluginFactory(
     pluginService: PluginService,
-    val graphqlService: GraphQLService,
 ) : PluginFactory<GraphQLPlugin>(pluginService) {
-    override fun create(): GraphQLPlugin = GraphQLPlugin(graphqlService)
+    override fun create(): GraphQLPlugin = GraphQLPlugin()
 }

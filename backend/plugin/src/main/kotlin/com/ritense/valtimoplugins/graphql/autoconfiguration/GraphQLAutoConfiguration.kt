@@ -17,8 +17,6 @@
 package com.ritense.valtimoplugins.graphql.autoconfiguration
 
 import com.ritense.plugin.service.PluginService
-import com.ritense.valtimoplugins.graphql.client.GraphQLClient
-import com.ritense.valtimoplugins.graphql.client.GraphQLService
 import com.ritense.valtimoplugins.graphql.plugin.GraphQLPluginFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -27,17 +25,8 @@ import org.springframework.context.annotation.Bean
 @AutoConfiguration
 class GraphQLAutoConfiguration {
     @Bean
-    @ConditionalOnMissingBean(GraphQLClient::class)
-    fun graphqlClient(): GraphQLClient = GraphQLClient()
-
-    @Bean
-    @ConditionalOnMissingBean(GraphQLService::class)
-    fun graphqlService(graphqlClient: GraphQLClient): GraphQLService = GraphQLService(graphqlClient)
-
-    @Bean
     @ConditionalOnMissingBean(GraphQLPluginFactory::class)
     fun graphqlPluginFactory(
         pluginService: PluginService,
-        graphqlService: GraphQLService,
-    ): GraphQLPluginFactory = GraphQLPluginFactory(pluginService, graphqlService)
+    ): GraphQLPluginFactory = GraphQLPluginFactory(pluginService)
 }

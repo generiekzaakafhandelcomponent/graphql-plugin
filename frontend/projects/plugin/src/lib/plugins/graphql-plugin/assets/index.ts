@@ -14,14 +14,4 @@
  * limitations under the License.
  */
 
-package com.ritense.valtimoplugins.graphql
-
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-@SpringBootApplication
-class TestApplication
-
-fun main(args: Array<String>) {
-    runApplication<TestApplication>(*args)
-}
+export * from "./graphql-plugin-logo";

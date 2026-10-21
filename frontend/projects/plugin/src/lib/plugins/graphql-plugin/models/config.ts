@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package com.ritense.valtimoplugins.graphql
+import {PluginConfigurationData} from "@valtimo/plugin";
 
-abstract class BaseTest
+interface GraphQLPluginConfig extends PluginConfigurationData {
+  graphqlUrl: string;
+}
+
+export {GraphQLPluginConfig};

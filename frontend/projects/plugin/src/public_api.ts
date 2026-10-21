@@ -22,4 +22,3 @@ export * from "./lib/plugins/graphql-plugin/models";
 export * from "./lib/plugins/graphql-plugin/graphql-plugin-module";
 export * from "./lib/plugins/graphql-plugin/graphql-plugin.specification";
 export * from "./lib/plugins/graphql-plugin/components/graphql-plugin-configuration/graphql-plugin-configuration.component";
-export * from "./lib/plugins/graphql-plugin/components/graphql-action-configuration/graphql-action-configuration.component";
