@@ -19,6 +19,10 @@ import {PluginConfigurationComponent, PluginConfigurationData} from "@valtimo/pl
 import {BehaviorSubject, combineLatest, Observable, Subscription, take} from "rxjs";
 import {GraphQLPluginConfig} from "../../models";
 
+interface GraphQLPluginConfigFormValue extends GraphQLPluginConfig {
+  useOAuth2?: boolean;
+}
+
 @Component({
   standalone: false,
   selector: "valtimo-graphql-plugin-configuration",
@@ -33,7 +37,7 @@ export class GraphQLPluginConfigurationComponent implements PluginConfigurationC
   @Output() configuration: EventEmitter<PluginConfigurationData> = new EventEmitter<PluginConfigurationData>();
 
   private saveSubscription!: Subscription;
-  private readonly formValue$ = new BehaviorSubject<GraphQLPluginConfig | null>(null);
+  readonly formValue$ = new BehaviorSubject<GraphQLPluginConfigFormValue | null>(null);
   private readonly valid$ = new BehaviorSubject<boolean>(false);
 
   ngOnInit(): void {
@@ -44,13 +48,15 @@ export class GraphQLPluginConfigurationComponent implements PluginConfigurationC
     this.saveSubscription?.unsubscribe();
   }
 
-  formValueChange(formValue: GraphQLPluginConfig): void {
+  formValueChange(formValue: GraphQLPluginConfigFormValue): void {
     this.formValue$.next(formValue);
     this.handleValid(formValue);
   }
 
-  private handleValid(formValue: GraphQLPluginConfig): void {
-    const valid = !!(formValue.configurationTitle && formValue.graphqlUrl);
+  private handleValid(formValue: GraphQLPluginConfigFormValue): void {
+    const oAuth2Valid =
+      !formValue.useOAuth2 || !!(formValue.tokenUrl && formValue.clientId && formValue.clientSecret);
+    const valid = !!(formValue.configurationTitle && formValue.graphqlUrl) && oAuth2Valid;
     this.valid$.next(valid);
     this.valid.emit(valid);
   }
@@ -61,7 +67,12 @@ export class GraphQLPluginConfigurationComponent implements PluginConfigurationC
         .pipe(take(1))
         .subscribe(([formValue, valid]) => {
           if (valid) {
-            this.configuration.emit(formValue!);
+            const {useOAuth2, ...configuration} = formValue!;
+            this.configuration.emit(
+              useOAuth2
+                ? configuration
+                : {...configuration, tokenUrl: undefined, clientId: undefined, clientSecret: undefined}
+            );
           }
         });
     });

@@ -17,13 +17,17 @@
 package com.ritense.valtimoplugins.graphql.plugin
 
 import com.ritense.valtimoplugins.graphql.client.GraphQLClient
+import com.ritense.valtimoplugins.graphql.client.OAuth2ClientCredentials
 import com.ritense.valueresolver.ValueResolverService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -105,11 +109,52 @@ internal class GraphQLPluginTest {
         verify(valueResolver, never()).resolveValues(any<String>(), any(), any())
     }
 
+    @Test
+    fun `should pass OAuth2 client credentials when they are configured`() {
+        plugin.tokenUrl = "http://auth.example.com/token"
+        plugin.clientId = "client-id"
+        plugin.clientSecret = "client-secret"
+
+        plugin.graphQlByInput(execution, QUERY, null, "result")
+
+        verify(graphqlClient).executeGraphQlQuery(
+            "http://graphql.example.com/graphql",
+            QUERY,
+            emptyMap(),
+            OAuth2ClientCredentials("http://auth.example.com/token", "client-id", "client-secret"),
+        )
+    }
+
+    @Test
+    fun `should not pass OAuth2 client credentials when they are not configured`() {
+        plugin.graphQlByInput(execution, QUERY, null, "result")
+
+        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), null)
+    }
+
+    @Test
+    fun `should ignore client secret when token url and client id are not configured`() {
+        plugin.clientSecret = "client-secret"
+
+        plugin.graphQlByInput(execution, QUERY, null, "result")
+
+        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), null)
+    }
+
+    @Test
+    fun `should fail when OAuth2 client credentials are incomplete`() {
+        plugin.tokenUrl = "http://auth.example.com/token"
+        plugin.clientId = "client-id"
+
+        assertThrows<IllegalStateException> { plugin.graphQlByInput(execution, QUERY, null, "result") }
+        verify(graphqlClient, never()).executeGraphQlQuery(any(), any(), any(), anyOrNull())
+    }
+
     private fun executeAndCaptureVariables(variables: String?): Map<String, Any?> {
         plugin.graphQlByInput(execution, QUERY, variables, "result")
 
         val captor = argumentCaptor<Map<String, Any?>>()
-        verify(graphqlClient).executeGraphQlQuery(eq("http://graphql.example.com/graphql"), eq(QUERY), captor.capture())
+        verify(graphqlClient).executeGraphQlQuery(eq("http://graphql.example.com/graphql"), eq(QUERY), captor.capture(), isNull())
         return captor.firstValue
     }
 

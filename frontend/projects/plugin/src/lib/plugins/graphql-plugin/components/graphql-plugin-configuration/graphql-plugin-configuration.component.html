@@ -18,7 +18,8 @@
   (valueChange)="formValueChange($event)"
   *ngIf="{
     disabled: disabled$ | async,
-    prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null
+    prefill: prefillConfiguration$ ? (prefillConfiguration$ | async) : null,
+    formValue: formValue$ | async
   } as obs"
 >
   <v-input
@@ -42,4 +43,47 @@
     [widthPx]="350"
   >
   </v-input>
+  <v-input
+    type="checkbox"
+    name="useOAuth2"
+    [title]="'useOAuth2' | pluginTranslate: pluginId | async"
+    [margin]="true"
+    [disabled]="obs.disabled"
+    [defaultValue]="!!(obs.prefill?.tokenUrl || obs.prefill?.clientId)"
+    [required]="false"
+  >
+  </v-input>
+  <ng-container *ngIf="obs.formValue?.useOAuth2">
+    <v-input
+      name="tokenUrl"
+      [title]="'tokenUrl' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.tokenUrl"
+      [required]="true"
+      [widthPx]="350"
+    >
+    </v-input>
+    <v-input
+      name="clientId"
+      [title]="'clientId' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.clientId"
+      [required]="true"
+      [widthPx]="350"
+    >
+    </v-input>
+    <v-input
+      name="clientSecret"
+      [title]="'clientSecret' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.clientSecret"
+      [required]="true"
+      [widthPx]="350"
+      type="password"
+    >
+    </v-input>
+  </ng-container>
 </v-form>

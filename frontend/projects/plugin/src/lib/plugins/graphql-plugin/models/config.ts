@@ -18,6 +18,9 @@ import {PluginConfigurationData} from "@valtimo/plugin";
 
 interface GraphQLPluginConfig extends PluginConfigurationData {
   graphqlUrl: string;
+  tokenUrl?: string;
+  clientId?: string;
+  clientSecret?: string;
 }
 
 interface GraphQlByInputActionConfig {
