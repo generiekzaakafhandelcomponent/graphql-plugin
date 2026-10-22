@@ -1,6 +1,4 @@
-# Plugin Documentation
-
-<!-- Use this page to document your plugin. Below is a suggested structure. -->
+# GraphQL Plugin
 
 ## Overview
 
@@ -12,7 +10,7 @@ The GraphQL plugin executes GraphQL queries on a configured GraphQL endpoint.
 
 ```kotlin
 dependencies {
-    implementation("com.ritense.valtimoplugins:graphql-plugin:0.0.1")
+    implementation("com.ritense.valtimoplugins:graphql-plugin:1.0.0")
 }
 ```
 
@@ -21,7 +19,7 @@ dependencies {
 ```json
 {
   "dependencies": {
-    "@valtimo-plugins/graphql-plugin": "0.0.1"
+    "@valtimo-plugins/graphql-plugin": "1.0.0"
   }
 }
 ```
@@ -50,8 +48,6 @@ import {
 
 ## Configuration
 
-List the plugin configuration properties and how to set them.
-
 | Property     | Type   | Required | Description                                                                 |
 |--------------|--------|----------|-----------------------------------------------------------------------------|
 | graphqlUrl   | string | Yes      | The URL of the GraphQL endpoint, e.g. `https://example.com/graphql`         |
@@ -69,7 +65,8 @@ endpoint is called without authentication, and a stored `clientSecret` is ignore
 
 ### GraphQL by Input
 
-Key: `graphql-by-input`. Executes a GraphQL query on the configured endpoint and stores the response data in a process variable.
+Key: `graphql-by-input`. Executes a GraphQL query on the configured endpoint and stores the response `data` in a process
+variable. When the response contains GraphQL errors, the service task fails with an exception listing them.
 
 | Parameter                 | Type   | Required | Description                                                                                                  |
 |---------------------------|--------|----------|--------------------------------------------------------------------------------------------------------------|
@@ -79,4 +76,23 @@ Key: `graphql-by-input`. Executes a GraphQL query on the configured endpoint and
 
 ## Usage
 
-Explain how to use the plugin in a process, with examples if applicable.
+Link a service task to the `graphql-by-input` action, either in the process link screen or as auto-deployed
+configuration. Example process link that looks up a record by the id in process variable `caseId`:
+
+```json
+{
+    "activityId": "query-record",
+    "activityType": "bpmn:ServiceTask:start",
+    "processLinkType": "plugin",
+    "pluginDefinitionKey": "graphql-plugin",
+    "pluginActionDefinitionKey": "graphql-by-input",
+    "pluginConfigurationId": "<plugin configuration id>",
+    "actionProperties": {
+        "query": "query GetRecord($id: Int!) { record(id: $id) { id name } }",
+        "variables": "{\"id\": \"pv:caseId\"}",
+        "resultProcessVariableName": "queryResult"
+    }
+}
+```
+
+After the task, process variable `queryResult` holds the response data, e.g. `{"record": {"id": 1, "name": "..."}}`.
