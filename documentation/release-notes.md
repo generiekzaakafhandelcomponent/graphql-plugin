@@ -2,7 +2,7 @@
 
 Overzicht van wijzigingen per versie van de GraphQL plugin.
 
-## 0.0.1
+## 1.0.0
 
 Eerste versie:
 

@@ -10,7 +10,7 @@ The GraphQL plugin executes GraphQL queries on a configured GraphQL endpoint.
 
 ```kotlin
 dependencies {
-    implementation("com.ritense.valtimoplugins:graphql-plugin:0.0.1")
+    implementation("com.ritense.valtimoplugins:graphql-plugin:1.0.0")
 }
 ```
 
@@ -19,7 +19,7 @@ dependencies {
 ```json
 {
   "dependencies": {
-    "@valtimo-plugins/graphql-plugin": "0.0.1"
+    "@valtimo-plugins/graphql-plugin": "1.0.0"
   }
 }
 ```
