@@ -1,21 +1,10 @@
-# GZAC Plugin Template
+# GraphQL Plugin for Valtimo
 
-A template repository for building your own GZAC plugins. Copy this project to get a ready-made structure with build
-configuration, CI/CD workflows, and a working example to start from.
-
-## Getting started
-
-1. Copy or fork this repository
-2. Rename the sample plugin package, module, and configuration to match your plugin
-3. Follow the [Getting Started](documentation/getting-started.md) guide for setup and development instructions
+A [Valtimo](https://www.valtimo.nl) plugin that executes GraphQL queries on a configured GraphQL endpoint from BPMN
+service tasks, optionally authenticated with an OAuth2 access token (client credentials flow).
 
 ## Documentation
 
-- [Getting Started](documentation/getting-started.md) — setup and development instructions
+- [GraphQL Plugin](documentation/plugin.md) — installation, configuration, actions and usage
 - [Example Application](documentation/example-application.md) — running the example app locally
-- [GraphQL Plugin](documentation/plugin.md) — reference implementation included in this template
 - [Release notes](documentation/release-notes.md) — versiegeschiedenis en wijzigingen
-
-## Contact
-
--- naam contactpersoon (bedrijfsnaam)
