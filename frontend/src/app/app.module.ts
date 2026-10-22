@@ -20,6 +20,7 @@ import {AnalyseModule} from "@valtimo/analyse";
 import {AppComponent} from "./app.component";
 import {AppRoutingModule} from "./app-routing.module";
 import {
+  ExternalPluginPageRoutingModule,
   BesluitenApiPluginModule,
   besluitenApiPluginSpecification,
   CatalogiApiPluginModule,
@@ -53,6 +54,7 @@ import {
   ValuePathSelectorComponent,
   WidgetModule,
 } from "@valtimo/components";
+import {AdminSettingsModule} from '@valtimo/admin-settings';
 import {BrowserModule} from "@angular/platform-browser";
 import {BuildingBlockManagementModule} from "@valtimo/building-block-management";
 import {CaseManagementModule} from "@valtimo/case-management";
@@ -115,6 +117,8 @@ export function tabsFactory() {
     environment.authentication.module,
     AccessControlManagementModule,
     AccountModule,
+    AdminSettingsModule,
+    ExternalPluginPageRoutingModule,
     AnalyseModule,
     AppRoutingModule,
     BootstrapModule,

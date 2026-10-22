@@ -52,9 +52,18 @@ import {
 
 List the plugin configuration properties and how to set them.
 
-| Property   | Type   | Required | Description                                                         |
-|------------|--------|----------|---------------------------------------------------------------------|
-| graphqlUrl | string | Yes      | The URL of the GraphQL endpoint, e.g. `https://example.com/graphql` |
+| Property     | Type   | Required | Description                                                                 |
+|--------------|--------|----------|-----------------------------------------------------------------------------|
+| graphqlUrl   | string | Yes      | The URL of the GraphQL endpoint, e.g. `https://example.com/graphql`         |
+| tokenUrl     | string | No       | OAuth2 token endpoint for the client credentials flow                       |
+| clientId     | string | No       | OAuth2 client ID                                                            |
+| clientSecret | string | No       | OAuth2 client secret (stored as a secret)                                   |
+
+In the configuration screen, the OAuth2 settings are shown after ticking "Use OAuth2 authentication"; all three are then
+required. With OAuth2 enabled, the plugin requests an access token with the OAuth2 client credentials flow (client
+authentication via HTTP Basic) and sends it as `Authorization: Bearer <token>` with every GraphQL request. Tokens are
+cached until shortly before they expire. Unticking the checkbox clears `tokenUrl` and `clientId`; without those the
+endpoint is called without authentication, and a stored `clientSecret` is ignored.
 
 ## Actions
 

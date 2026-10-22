@@ -24,6 +24,7 @@ import com.ritense.plugin.annotation.PluginActionProperty
 import com.ritense.plugin.annotation.PluginProperty
 import com.ritense.processlink.domain.ActivityTypeWithEventName.SERVICE_TASK_START
 import com.ritense.valtimoplugins.graphql.client.GraphQLClient
+import com.ritense.valtimoplugins.graphql.client.OAuth2ClientCredentials
 import com.ritense.valueresolver.ValueResolverService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.operaton.bpm.engine.delegate.DelegateExecution
@@ -49,6 +50,15 @@ open class GraphQLPlugin(
     @PluginProperty(key = "graphqlUrl", secret = false)
     lateinit var graphqlUrl: String
 
+    @PluginProperty(key = "tokenUrl", required = false, secret = false)
+    var tokenUrl: String? = null
+
+    @PluginProperty(key = "clientId", required = false, secret = false)
+    var clientId: String? = null
+
+    @PluginProperty(key = "clientSecret", required = false, secret = true)
+    var clientSecret: String? = null
+
     @PluginAction(
         key = "graphql-by-input",
         title = "GraphQL by Input",
@@ -62,8 +72,22 @@ open class GraphQLPlugin(
         @PluginActionProperty resultProcessVariableName: String,
     ) {
         logger.info { "Executing GraphQL query at $graphqlUrl" }
-        val data = graphqlClient.executeGraphQlQuery(graphqlUrl, query, parseVariables(execution, variables))
+        val data = graphqlClient.executeGraphQlQuery(graphqlUrl, query, parseVariables(execution, variables), getOAuth2ClientCredentials())
         execution.setVariable(resultProcessVariableName, data)
+    }
+
+    /**
+     * Returns the OAuth2 client credentials when OAuth2 is configured (tokenUrl or clientId set), or null otherwise.
+     * A clientSecret alone is ignored, because Valtimo keeps a stored secret when the other OAuth2 settings are cleared.
+     */
+    private fun getOAuth2ClientCredentials(): OAuth2ClientCredentials? {
+        if (tokenUrl.isNullOrBlank() && clientId.isNullOrBlank()) {
+            return null
+        }
+        check(listOf(tokenUrl, clientId, clientSecret).none { it.isNullOrBlank() }) {
+            "Incomplete OAuth2 configuration: tokenUrl, clientId and clientSecret must all be set"
+        }
+        return OAuth2ClientCredentials(tokenUrl!!, clientId!!, clientSecret!!)
     }
 
     private fun parseVariables(
