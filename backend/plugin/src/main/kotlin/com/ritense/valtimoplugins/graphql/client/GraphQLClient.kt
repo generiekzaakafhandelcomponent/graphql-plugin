@@ -17,47 +17,62 @@
 package com.ritense.valtimoplugins.graphql.client
 
 import com.ritense.valtimo.contract.annotation.SkipComponentScan
-import org.springframework.core.ParameterizedTypeReference
+import com.ritense.valtimoplugins.graphql.auth.AccessTokenProvider
+import com.ritense.valtimoplugins.graphql.auth.GraphQLAuthentication
+import com.ritense.valtimoplugins.graphql.auth.NoAuthentication
+import com.ritense.valtimoplugins.graphql.auth.OAuth2Authentication
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.graphql.client.HttpSyncGraphQlClient
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClient
-import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
-data class OAuth2ClientCredentials(
-    val tokenUrl: String,
-    val clientId: String,
-    val clientSecret: String,
-)
+private val logger = KotlinLogging.logger {}
 
 @SkipComponentScan
 @Component
 class GraphQLClient(
     private val restClient: RestClient,
+    private val accessTokenProvider: AccessTokenProvider = AccessTokenProvider(restClient),
 ) {
     private val graphQlClientCache = ConcurrentHashMap<String, HttpSyncGraphQlClient>()
-    private val tokenCache = ConcurrentHashMap<OAuth2ClientCredentials, CachedToken>()
 
     fun executeGraphQlQuery(
         graphqlUrl: String,
         query: String,
         variables: Map<String, Any?>,
-        credentials: OAuth2ClientCredentials? = null,
+        authentication: GraphQLAuthentication = NoAuthentication,
     ): Map<String, Any>? {
         val cachedClient = graphQlClientCache.computeIfAbsent(graphqlUrl) {
             HttpSyncGraphQlClient.builder(restClient)
                 .url(graphqlUrl)
                 .build()
         }
-        val client = if (credentials != null) {
-            cachedClient.mutate().header(HttpHeaders.AUTHORIZATION, "Bearer ${getAccessToken(credentials)}").build()
-        } else {
-            cachedClient
+        if (authentication !is OAuth2Authentication) {
+            return execute(cachedClient, query, variables)
         }
 
+        val accessToken = accessTokenProvider.getAccessToken(authentication)
+        return try {
+            execute(cachedClient.withBearer(accessToken), query, variables)
+        } catch (e: HttpClientErrorException.Unauthorized) {
+            // The token may have been revoked or rotated before it expired: retry exactly once with a new token.
+            logger.debug { "GraphQL endpoint returned 401, retrying once with a new access token" }
+            accessTokenProvider.invalidate(authentication, accessToken)
+            execute(cachedClient.withBearer(accessTokenProvider.getAccessToken(authentication)), query, variables)
+        }
+    }
+
+    private fun HttpSyncGraphQlClient.withBearer(accessToken: String) =
+        mutate().header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken").build()
+
+    private fun execute(
+        client: HttpSyncGraphQlClient,
+        query: String,
+        variables: Map<String, Any?>,
+    ): Map<String, Any>? {
         val response = client.document(query)
             .variables(variables)
             .executeSync()
@@ -67,38 +82,5 @@ class GraphQLClient(
         }
 
         return response.getData<Map<String, Any>>()
-    }
-
-    /**
-     * Returns the cached access token, or retrieves a new one with the OAuth2 client credentials flow
-     * when there is none or its lifespan has expired.
-     */
-    private fun getAccessToken(credentials: OAuth2ClientCredentials): String {
-        tokenCache[credentials]?.takeIf { it.expiresAt.isAfter(Instant.now()) }?.let { return it.accessToken }
-
-        val response = restClient.post()
-            .uri(credentials.tokenUrl)
-            .headers { it.setBasicAuth(credentials.clientId, credentials.clientSecret) }
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(LinkedMultiValueMap<String, String>().apply { add("grant_type", "client_credentials") })
-            .retrieve()
-            .body(object : ParameterizedTypeReference<Map<String, Any>>() {})
-
-        val accessToken = response?.get("access_token") as? String
-            ?: throw IllegalStateException("No access_token in OAuth2 token response from ${credentials.tokenUrl}")
-        val expiresIn = (response["expires_in"] as? Number)?.toLong()
-        if (expiresIn != null) {
-            tokenCache[credentials] = CachedToken(accessToken, Instant.now().plusSeconds(expiresIn - EXPIRY_MARGIN_SECONDS))
-        }
-        return accessToken
-    }
-
-    private data class CachedToken(
-        val accessToken: String,
-        val expiresAt: Instant,
-    )
-
-    private companion object {
-        const val EXPIRY_MARGIN_SECONDS = 30L
     }
 }

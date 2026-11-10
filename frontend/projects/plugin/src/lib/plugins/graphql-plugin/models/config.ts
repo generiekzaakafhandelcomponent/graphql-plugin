@@ -16,11 +16,18 @@
 
 import {PluginConfigurationData} from "@valtimo/plugin";
 
+type AuthType = "NONE" | "CLIENT_SECRET" | "PRIVATE_KEY_JWT";
+
 interface GraphQLPluginConfig extends PluginConfigurationData {
   graphqlUrl: string;
+  authType?: AuthType;
   tokenUrl?: string;
+  tenantId?: string;
   clientId?: string;
   clientSecret?: string;
+  privateKey?: string;
+  certificate?: string;
+  resourceUri?: string;
 }
 
 interface GraphQlByInputActionConfig {
@@ -29,4 +36,4 @@ interface GraphQlByInputActionConfig {
   resultProcessVariableName: string;
 }
 
-export {GraphQLPluginConfig, GraphQlByInputActionConfig};
+export {AuthType, GraphQLPluginConfig, GraphQlByInputActionConfig};

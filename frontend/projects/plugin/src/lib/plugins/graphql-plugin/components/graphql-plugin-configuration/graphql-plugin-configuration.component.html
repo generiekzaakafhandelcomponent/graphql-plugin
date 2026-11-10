@@ -43,27 +43,67 @@
     [widthPx]="350"
   >
   </v-input>
-  <v-input
-    type="checkbox"
-    name="useOAuth2"
-    [title]="'useOAuth2' | pluginTranslate: pluginId | async"
+  <v-select
+    name="authType"
+    [title]="'authType' | pluginTranslate: pluginId | async"
     [margin]="true"
+    [items]="[
+      {id: 'NONE', text: ('authTypeNone' | pluginTranslate: pluginId | async) || 'NONE'},
+      {id: 'CLIENT_SECRET', text: ('authTypeClientSecret' | pluginTranslate: pluginId | async) || 'CLIENT_SECRET'},
+      {id: 'PRIVATE_KEY_JWT', text: ('authTypePrivateKeyJwt' | pluginTranslate: pluginId | async) || 'PRIVATE_KEY_JWT'}
+    ]"
+    [defaultSelectionId]="defaultAuthType(obs.prefill)"
     [disabled]="obs.disabled"
-    [defaultValue]="!!(obs.prefill?.tokenUrl || obs.prefill?.clientId)"
-    [required]="false"
+    [required]="true"
+    [clearable]="false"
+    [widthInPx]="350"
   >
-  </v-input>
-  <ng-container *ngIf="obs.formValue?.useOAuth2">
+  </v-select>
+  <ng-container *ngIf="obs.formValue?.authType === 'CLIENT_SECRET'">
     <v-input
       name="tokenUrl"
       [title]="'tokenUrl' | pluginTranslate: pluginId | async"
+      [tooltip]="'tokenUrlTooltip' | pluginTranslate: pluginId | async"
       [margin]="true"
       [disabled]="obs.disabled"
       [defaultValue]="obs.prefill?.tokenUrl"
+      [required]="false"
+      [widthPx]="350"
+    >
+    </v-input>
+  </ng-container>
+  <ng-container
+    *ngIf="
+      obs.formValue?.authType === 'PRIVATE_KEY_JWT' ||
+      (obs.formValue?.authType === 'CLIENT_SECRET' && !obs.formValue?.tokenUrl)
+    "
+  >
+    <v-input
+      name="tenantId"
+      [title]="'tenantId' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.tenantId"
       [required]="true"
       [widthPx]="350"
     >
     </v-input>
+    <ng-container *ngTemplateOutlet="fieldError; context: {field: 'tenantId'}"></ng-container>
+    <v-input
+      name="resourceUri"
+      [title]="'resourceUri' | pluginTranslate: pluginId | async"
+      [tooltip]="'resourceUriTooltip' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.resourceUri"
+      [required]="true"
+      [widthPx]="350"
+      placeholder="https://graph.microsoft.com"
+    >
+    </v-input>
+    <ng-container *ngTemplateOutlet="fieldError; context: {field: 'resourceUri'}"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="obs.formValue?.authType === 'CLIENT_SECRET' || obs.formValue?.authType === 'PRIVATE_KEY_JWT'">
     <v-input
       name="clientId"
       [title]="'clientId' | pluginTranslate: pluginId | async"
@@ -74,6 +114,8 @@
       [widthPx]="350"
     >
     </v-input>
+  </ng-container>
+  <ng-container *ngIf="obs.formValue?.authType === 'CLIENT_SECRET'">
     <v-input
       name="clientSecret"
       [title]="'clientSecret' | pluginTranslate: pluginId | async"
@@ -86,4 +128,40 @@
     >
     </v-input>
   </ng-container>
+  <ng-container *ngIf="obs.formValue?.authType === 'PRIVATE_KEY_JWT'">
+    <v-input
+      name="privateKey"
+      [title]="'privateKey' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.privateKey"
+      [required]="true"
+      [widthPx]="350"
+      type="password"
+    >
+    </v-input>
+    <ng-container *ngTemplateOutlet="fieldError; context: {field: 'privateKey'}"></ng-container>
+    <v-input
+      name="certificate"
+      [title]="'certificate' | pluginTranslate: pluginId | async"
+      [margin]="true"
+      [disabled]="obs.disabled"
+      [defaultValue]="obs.prefill?.certificate"
+      [required]="true"
+      [fullWidth]="true"
+      [rows]="8"
+      type="textarea"
+    >
+    </v-input>
+    <ng-container *ngTemplateOutlet="fieldError; context: {field: 'certificate'}"></ng-container>
+    <p *ngIf="certificateThumbprint$ | async as thumbprint">
+      {{ 'certificateThumbprint' | pluginTranslate: pluginId | async }}: <code>{{ thumbprint }}</code>
+    </p>
+  </ng-container>
 </v-form>
+
+<ng-template #fieldError let-field="field">
+  <p class="text-danger" *ngIf="(errors$ | async)?.[field] as errorKey">
+    {{ errorKey | pluginTranslate: pluginId | async }}
+  </p>
+</ng-template>
