@@ -27,6 +27,8 @@ val kotlinLoggingVersion: String by project
 val mockitoKotlinVersion: String by project
 val valtimoVersion: String by project
 val operatonVersion: String by project
+val okhttpVersion: String by project
+val nimbusJoseJwtVersion: String by project
 
 dependencies {
     compileOnly("com.ritense.valtimo:plugin-valtimo")
@@ -39,6 +41,7 @@ dependencies {
 
     compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
     implementation("org.springframework.graphql:spring-graphql")
+    implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJoseJwtVersion")
 
     // Testing
     testImplementation("com.ritense.valtimo:plugin-valtimo")
@@ -54,6 +57,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 
