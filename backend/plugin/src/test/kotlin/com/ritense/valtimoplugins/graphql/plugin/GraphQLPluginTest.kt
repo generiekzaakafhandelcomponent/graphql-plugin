@@ -16,18 +16,19 @@
 
 package com.ritense.valtimoplugins.graphql.plugin
 
+import com.ritense.valtimoplugins.graphql.auth.AuthType
+import com.ritense.valtimoplugins.graphql.auth.ClientSecretAuthentication
+import com.ritense.valtimoplugins.graphql.auth.InvalidPluginPropertyException
+import com.ritense.valtimoplugins.graphql.auth.NoAuthentication
 import com.ritense.valtimoplugins.graphql.client.GraphQLClient
-import com.ritense.valtimoplugins.graphql.client.OAuth2ClientCredentials
 import com.ritense.valueresolver.ValueResolverService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -121,7 +122,7 @@ internal class GraphQLPluginTest {
             "http://graphql.example.com/graphql",
             QUERY,
             emptyMap(),
-            OAuth2ClientCredentials("http://auth.example.com/token", "client-id", "client-secret"),
+            ClientSecretAuthentication("http://auth.example.com/token", "client-id", "client-secret"),
         )
     }
 
@@ -129,7 +130,7 @@ internal class GraphQLPluginTest {
     fun `should not pass OAuth2 client credentials when they are not configured`() {
         plugin.graphQlByInput(execution, QUERY, null, "result")
 
-        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), null)
+        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), NoAuthentication)
     }
 
     @Test
@@ -138,7 +139,7 @@ internal class GraphQLPluginTest {
 
         plugin.graphQlByInput(execution, QUERY, null, "result")
 
-        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), null)
+        verify(graphqlClient).executeGraphQlQuery("http://graphql.example.com/graphql", QUERY, emptyMap(), NoAuthentication)
     }
 
     @Test
@@ -146,15 +147,25 @@ internal class GraphQLPluginTest {
         plugin.tokenUrl = "http://auth.example.com/token"
         plugin.clientId = "client-id"
 
-        assertThrows<IllegalStateException> { plugin.graphQlByInput(execution, QUERY, null, "result") }
-        verify(graphqlClient, never()).executeGraphQlQuery(any(), any(), any(), anyOrNull())
+        assertThrows<InvalidPluginPropertyException> { plugin.graphQlByInput(execution, QUERY, null, "result") }
+        verify(graphqlClient, never()).executeGraphQlQuery(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `should validate authentication properties on save`() {
+        plugin.authType = AuthType.PRIVATE_KEY_JWT
+        plugin.tenantId = "not-a-guid"
+
+        val e = assertThrows<InvalidPluginPropertyException> { plugin.validateAuthentication() }
+
+        assertEquals("tenantId", e.property)
     }
 
     private fun executeAndCaptureVariables(variables: String?): Map<String, Any?> {
         plugin.graphQlByInput(execution, QUERY, variables, "result")
 
         val captor = argumentCaptor<Map<String, Any?>>()
-        verify(graphqlClient).executeGraphQlQuery(eq("http://graphql.example.com/graphql"), eq(QUERY), captor.capture(), isNull())
+        verify(graphqlClient).executeGraphQlQuery(eq("http://graphql.example.com/graphql"), eq(QUERY), captor.capture(), eq(NoAuthentication))
         return captor.firstValue
     }
 
