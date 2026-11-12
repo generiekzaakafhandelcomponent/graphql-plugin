@@ -4,5 +4,18 @@
         "activityType": "bpmn:StartEvent:start",
         "processLinkType": "form",
         "formDefinitionName": "start-form-example"
+    },
+    {
+        "activityId": "time-api-graphql-action",
+        "activityType": "bpmn:ServiceTask:start",
+        "pluginConfigurationId": "4ac9a49f-4aeb-4f91-86d9-853fd95a1b33",
+        "pluginActionDefinitionKey": "graphql-by-input",
+        "actionProperties": {
+            "query": "{\n  operatie_gebeurtenis(first: 5) {\n    items { GebeurtenisId MijlpaalId Datum Fiattering_Datum BronEntiteit BronId CasusId VormId Aangemaakt }\n  }\n}",
+            "resultProcessVariableName": "resultaat"
+        },
+        "referenceType": "FIXED",
+        "pluginDefinitionKey": "graphql-plugin",
+        "processLinkType": "plugin"
     }
 ]

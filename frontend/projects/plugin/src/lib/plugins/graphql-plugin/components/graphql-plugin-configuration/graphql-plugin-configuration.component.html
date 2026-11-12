@@ -40,7 +40,7 @@
     [disabled]="obs.disabled"
     [defaultValue]="obs.prefill?.graphqlUrl"
     [required]="true"
-    [widthPx]="350"
+    [fullWidth]="true"
   >
   </v-input>
   <v-select
@@ -132,9 +132,11 @@
     <v-input
       name="privateKey"
       [title]="'privateKey' | pluginTranslate: pluginId | async"
+      [tooltip]="'privateKeyTooltip' | pluginTranslate: pluginId | async"
       [margin]="true"
       [disabled]="obs.disabled"
       [defaultValue]="obs.prefill?.privateKey"
+      [maxLength]="16384"
       [required]="true"
       [widthPx]="350"
       type="password"
@@ -144,9 +146,11 @@
     <v-input
       name="certificate"
       [title]="'certificate' | pluginTranslate: pluginId | async"
+      [tooltip]="'certificateTooltip' | pluginTranslate: pluginId | async"
       [margin]="true"
       [disabled]="obs.disabled"
       [defaultValue]="obs.prefill?.certificate"
+      [maxLength]="16384"
       [required]="true"
       [fullWidth]="true"
       [rows]="8"
@@ -156,6 +160,9 @@
     <ng-container *ngTemplateOutlet="fieldError; context: {field: 'certificate'}"></ng-container>
     <p *ngIf="certificateThumbprint$ | async as thumbprint">
       {{ 'certificateThumbprint' | pluginTranslate: pluginId | async }}: <code>{{ thumbprint }}</code>
+    </p>
+    <p *ngIf="certificateExpiry$ | async as expiry">
+      {{ 'certificateExpiry' | pluginTranslate: pluginId | async }}: <code>{{ expiry | date: 'yyyy-MM-dd HH:mm' }}</code>
     </p>
   </ng-container>
 </v-form>

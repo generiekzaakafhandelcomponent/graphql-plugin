@@ -20,8 +20,41 @@ import {BehaviorSubject, combineLatest, from, map, Observable, of, Subscription,
 import {AuthType, GraphQLPluginConfig} from "../../models";
 
 const GUID = /^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/;
-const PRIVATE_KEY_PEM = /-----BEGIN (RSA )?PRIVATE KEY-----/;
+// Requires the END line too, so a truncated paste is reported in the form (v-input defaults to maxLength 250)
+const PRIVATE_KEY_PEM = /-----BEGIN (RSA )?PRIVATE KEY-----[\s\S]+-----END \1?PRIVATE KEY-----/;
 const CERTIFICATE_PEM = /-----BEGIN CERTIFICATE-----([\s\S]+?)-----END CERTIFICATE-----/;
+
+/** Reads notAfter from a DER certificate: Certificate > tbsCertificate > [version], serial, signature, issuer, validity. */
+export function certificateNotAfter(certificateBase64: string): Date | null {
+  try {
+    const der = Uint8Array.from(atob(certificateBase64.replace(/\s/g, "")), c => c.charCodeAt(0));
+    // Returns [content start, content end] of the TLV at pos
+    const tlv = (pos: number): [number, number] => {
+      let length = der[pos + 1];
+      let start = pos + 2;
+      if (length & 0x80) {
+        const bytes = length & 0x7f;
+        length = 0;
+        for (let i = 0; i < bytes; i++) length = length * 256 + der[start + i];
+        start += bytes;
+      }
+      return [start, start + length];
+    };
+    let pos = tlv(tlv(0)[0])[0]; // first element inside tbsCertificate
+    if (der[pos] === 0xa0) pos = tlv(pos)[1]; // skip optional version
+    for (let i = 0; i < 3; i++) pos = tlv(pos)[1]; // skip serial, signature, issuer
+    const notBefore = tlv(pos)[0];
+    const notAfter = tlv(notBefore)[1];
+    const [start, end] = tlv(notAfter);
+    const text = String.fromCharCode(...der.subarray(start, end));
+    // UTCTime (0x17) has a 2-digit year: 50-99 is 19xx, otherwise 20xx (RFC 5280)
+    const full = der[notAfter] === 0x17 ? (Number(text.slice(0, 2)) >= 50 ? "19" : "20") + text : text;
+    const m = full.match(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})Z$/);
+    return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6])) : null;
+  } catch {
+    return null;
+  }
+}
 
 @Component({
   standalone: false,
@@ -45,6 +78,11 @@ export class GraphQLPluginConfigurationComponent implements PluginConfigurationC
   readonly certificateThumbprint$ = this.formValue$.pipe(
     map(formValue => formValue?.certificate?.match(CERTIFICATE_PEM)?.[1]),
     switchMap(base64 => (base64 ? from(this.sha1Thumbprint(base64)) : of(null)))
+  );
+  /** notAfter of the certificate in the form, so an expiring certificate is noticed before token requests fail. */
+  readonly certificateExpiry$ = this.formValue$.pipe(
+    map(formValue => formValue?.certificate?.match(CERTIFICATE_PEM)?.[1]),
+    map(base64 => (base64 ? certificateNotAfter(base64) : null))
   );
 
   ngOnInit(): void {

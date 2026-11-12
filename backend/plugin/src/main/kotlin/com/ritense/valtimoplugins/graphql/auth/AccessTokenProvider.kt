@@ -181,11 +181,6 @@ class AccessTokenProvider(
         if (idtyp != "app") {
             throw TokenRequestException("Access token is not an application token (idtyp=$idtyp); only application permissions are supported")
         }
-        if ((claims.getClaim("roles") as? List<*>).isNullOrEmpty()) {
-            throw TokenRequestException(
-                "Access token has no roles claim: add application permissions for ${authentication.resourceUri} and grant admin consent",
-            )
-        }
     }
 
     private data class CachedToken(
