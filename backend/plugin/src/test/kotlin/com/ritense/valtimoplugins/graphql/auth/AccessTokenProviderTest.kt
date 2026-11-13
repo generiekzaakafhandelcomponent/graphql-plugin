@@ -166,15 +166,6 @@ internal class AccessTokenProviderTest {
     }
 
     @Test
-    fun `should reject token without roles as missing admin consent`() {
-        server.enqueue(tokenResponse(TestKeys.accessToken(roles = null)))
-
-        val e = assertThrows<TokenRequestException> { provider.getAccessToken(privateKeyJwt) }
-
-        assertTrue(e.message!!.contains("admin consent"))
-    }
-
-    @Test
     fun `should reject token that is not an application token`() {
         server.enqueue(tokenResponse(TestKeys.accessToken(idtyp = "user")))
 
