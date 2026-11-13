@@ -158,7 +158,7 @@ internal class GraphQLPluginTest {
 
         val e = assertThrows<InvalidPluginPropertyException> { plugin.validateAuthentication() }
 
-        assertEquals("tenantId", e.property)
+        assertEquals("privateKey", e.property)
     }
 
     private fun executeAndCaptureVariables(variables: String?): Map<String, Any?> {
