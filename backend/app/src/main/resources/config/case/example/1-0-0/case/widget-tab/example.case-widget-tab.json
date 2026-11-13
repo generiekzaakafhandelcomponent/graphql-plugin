@@ -41,6 +41,92 @@
                         ]
                     ]
                 }
+            },
+            {
+                "type": "table",
+                "key": "graphql-query-result",
+                "title": "GraphQL Query Result",
+                "width": 4,
+                "highContrast": false,
+                "properties": {
+                    "collection": "doc:/resultaat/operatie_gebeurtenis/items",
+                    "defaultPageSize": 5,
+                    "firstColumnAsTitle": false,
+                    "columns": [
+                        {
+                            "key": "GebeurtenisId",
+                            "title": "GebeurtenisId",
+                            "value": "/GebeurtenisId",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "MijlpaalId",
+                            "title": "MijlpaalId",
+                            "value": "/MijlpaalId",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "Datum",
+                            "title": "Datum",
+                            "value": "/Datum",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "Fiattering_Datum",
+                            "title": "Fiattering Datum",
+                            "value": "/Fiattering_Datum",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "BronEntiteit",
+                            "title": "BronEntiteit",
+                            "value": "/BronEntiteit",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "BronId",
+                            "title": "BronId",
+                            "value": "/BronId",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "CasusId",
+                            "title": "CasusId",
+                            "value": "/CasusId",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "VormId",
+                            "title": "VormId",
+                            "value": "/VormId",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        },
+                        {
+                            "key": "Aangemaakt",
+                            "title": "Aangemaakt",
+                            "value": "/Aangemaakt",
+                            "displayProperties": {
+                                "type": "text"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     }

@@ -15,6 +15,10 @@
         "message": {
             "type": "string",
             "description": "Message that was set in the plugin action"
+        },
+        "resultaat": {
+            "type": "object",
+            "description": "Result of the GraphQL query, copied from process variable resultaat"
         }
     }
 }

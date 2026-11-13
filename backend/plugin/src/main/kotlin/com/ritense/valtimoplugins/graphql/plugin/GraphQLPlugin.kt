@@ -21,10 +21,13 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ritense.plugin.annotation.Plugin
 import com.ritense.plugin.annotation.PluginAction
 import com.ritense.plugin.annotation.PluginActionProperty
+import com.ritense.plugin.annotation.PluginEvent
 import com.ritense.plugin.annotation.PluginProperty
+import com.ritense.plugin.domain.EventType
 import com.ritense.processlink.domain.ActivityTypeWithEventName.SERVICE_TASK_START
+import com.ritense.valtimoplugins.graphql.auth.AuthType
+import com.ritense.valtimoplugins.graphql.auth.GraphQLAuthentication
 import com.ritense.valtimoplugins.graphql.client.GraphQLClient
-import com.ritense.valtimoplugins.graphql.client.OAuth2ClientCredentials
 import com.ritense.valueresolver.ValueResolverService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.operaton.bpm.engine.delegate.DelegateExecution
@@ -50,6 +53,10 @@ open class GraphQLPlugin(
     @PluginProperty(key = "graphqlUrl", secret = false)
     lateinit var graphqlUrl: String
 
+    /** Null for configurations created before 1.3.0, see [GraphQLAuthentication.of]. */
+    @PluginProperty(key = "authType", required = false, secret = false)
+    var authType: AuthType? = null
+
     @PluginProperty(key = "tokenUrl", required = false, secret = false)
     var tokenUrl: String? = null
 
@@ -58,6 +65,23 @@ open class GraphQLPlugin(
 
     @PluginProperty(key = "clientSecret", required = false, secret = true)
     var clientSecret: String? = null
+
+    @PluginProperty(key = "tenantId", required = false, secret = false)
+    var tenantId: String? = null
+
+    @PluginProperty(key = "resourceUri", required = false, secret = false)
+    var resourceUri: String? = null
+
+    @PluginProperty(key = "privateKey", required = false, secret = true)
+    var privateKey: String? = null
+
+    @PluginProperty(key = "certificate", required = false, secret = false)
+    var certificate: String? = null
+
+    @PluginEvent(invokedOn = [EventType.CREATE, EventType.UPDATE])
+    open fun validateAuthentication() {
+        authentication()
+    }
 
     @PluginAction(
         key = "graphql-by-input",
@@ -72,23 +96,13 @@ open class GraphQLPlugin(
         @PluginActionProperty resultProcessVariableName: String,
     ) {
         logger.info { "Executing GraphQL query at $graphqlUrl" }
-        val data = graphqlClient.executeGraphQlQuery(graphqlUrl, query, parseVariables(execution, variables), getOAuth2ClientCredentials())
+        val data = graphqlClient.executeGraphQlQuery(graphqlUrl, query, parseVariables(execution, variables), authentication())
         execution.setVariable(resultProcessVariableName, data)
     }
 
-    /**
-     * Returns the OAuth2 client credentials when OAuth2 is configured (tokenUrl or clientId set), or null otherwise.
-     * A clientSecret alone is ignored, because Valtimo keeps a stored secret when the other OAuth2 settings are cleared.
-     */
-    private fun getOAuth2ClientCredentials(): OAuth2ClientCredentials? {
-        if (tokenUrl.isNullOrBlank() && clientId.isNullOrBlank()) {
-            return null
-        }
-        check(listOf(tokenUrl, clientId, clientSecret).none { it.isNullOrBlank() }) {
-            "Incomplete OAuth2 configuration: tokenUrl, clientId and clientSecret must all be set"
-        }
-        return OAuth2ClientCredentials(tokenUrl!!, clientId!!, clientSecret!!)
-    }
+    /** Properties of other auth types are ignored, because Valtimo keeps stored secrets when the UI clears them. */
+    private fun authentication() =
+        GraphQLAuthentication.of(authType, tokenUrl, tenantId, clientId, clientSecret, privateKey, certificate, resourceUri)
 
     private fun parseVariables(
         execution: DelegateExecution,
