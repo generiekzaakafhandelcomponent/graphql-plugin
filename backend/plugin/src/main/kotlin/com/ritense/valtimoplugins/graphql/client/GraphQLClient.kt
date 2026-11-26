@@ -78,9 +78,26 @@ class GraphQLClient(
             .executeSync()
 
         if (response.errors.isNotEmpty()) {
-            throw IllegalStateException("GraphQL errors: ${response.errors.joinToString { it.message }}")
+            val errors = response.errors.joinToString("; ") { error ->
+                buildString {
+                    append(error.message)
+                    if (error.path.isNotEmpty()) append(" (path: ${error.path})")
+                    if (error.extensions.isNotEmpty()) append(" (extensions: ${error.extensions})")
+                }
+            }
+            // Servers often omit the field name for input errors, so name the null variables ourselves (names only, no values).
+            val nullVariables = nullPaths(variables)
+            val nullHint = if (nullVariables.isEmpty()) "" else ". Variables that are null: ${nullVariables.joinToString()}"
+            throw IllegalStateException("GraphQL errors: $errors$nullHint")
         }
 
         return response.getData<Map<String, Any>>()
+    }
+
+    private fun nullPaths(value: Any?, path: String = ""): List<String> = when (value) {
+        null -> listOf(path)
+        is Map<*, *> -> value.flatMap { (key, child) -> nullPaths(child, if (path.isEmpty()) "$key" else "$path.$key") }
+        is List<*> -> value.flatMapIndexed { index, child -> nullPaths(child, "$path[$index]") }
+        else -> emptyList()
     }
 }

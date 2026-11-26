@@ -2,6 +2,13 @@
 
 Overzicht van wijzigingen per versie van de GraphQL plugin.
 
+## 1.3.1
+
+Verbeterd:
+
+- Foutmeldingen van het GraphQL endpoint tonen nu ook `path` en `extensions` van de fout, plus de namen van variabelen
+  die `null` zijn (ook geneste, bijv. `input.name`). Waarden worden niet gelogd.
+
 ## 1.3.0
 
 Nieuw:

@@ -150,6 +150,25 @@ internal class GraphQLClientTest {
         server.verify()
     }
 
+    @Test
+    fun `should name error path, extensions and null variables when the endpoint returns errors`() {
+        expectGraphQlRequest().andRespond(
+            withSuccess(
+                """{"errors": [{"message": "Cannot accept null for non-nullable input.", "path": ["createCase"], "extensions": {"code": "BAD_USER_INPUT"}}]}""",
+                MediaType.APPLICATION_JSON,
+            ),
+        )
+        val variables = mapOf("id" to 1, "input" to mapOf("name" to null, "tags" to listOf("a", null)), "zaak" to null)
+
+        val e = assertThrows<IllegalStateException> { graphqlClient.executeGraphQlQuery(GRAPHQL_URL, QUERY, variables) }
+
+        assertEquals(
+            "GraphQL errors: Cannot accept null for non-nullable input. (path: createCase) (extensions: {code=BAD_USER_INPUT})" +
+                ". Variables that are null: input.name, input.tags[1], zaak",
+            e.message,
+        )
+    }
+
     private fun expectTokenRequest(accessToken: String) =
         server.expect(once(), requestTo(TOKEN_URL))
             .andRespond(withSuccess("""{"access_token": "$accessToken", "expires_in": 300}""", MediaType.APPLICATION_JSON))
